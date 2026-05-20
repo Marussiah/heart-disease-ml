@@ -1,1 +1,926 @@
-<h1>Coming soon</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Heart Disease Prediction — ML Project</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface2: #1a2235;
+      --border: #1e2d45;
+      --accent: #3b82f6;
+      --accent2: #06b6d4;
+      --danger: #ef4444;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --heading-font: 'DM Serif Display', serif;
+      --body-font: 'DM Sans', sans-serif;
+      --mono-font: 'DM Mono', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body-font);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(59,130,246,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(6,182,212,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 20% 70%, rgba(239,68,68,0.06) 0%, transparent 60%);
+    }
+
+    /* Animated ECG line */
+    .ecg-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 120px;
+      opacity: 0.15;
+    }
+
+    .hero-tag {
+      font-family: var(--mono-font);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.3);
+      padding: 0.35rem 1rem;
+      border-radius: 2rem;
+      margin-bottom: 2rem;
+      display: inline-block;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero h1 {
+      font-family: var(--heading-font);
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin-bottom: 3rem;
+      font-weight: 300;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+
+    .hero-metrics {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 3rem;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+
+    .metric-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1rem 1.5rem;
+      text-align: center;
+      min-width: 110px;
+    }
+
+    .metric-pill .val {
+      font-family: var(--mono-font);
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: var(--accent);
+      display: block;
+    }
+
+    .metric-pill .lbl {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.7s 0.4s ease both;
+    }
+
+    .btn {
+      padding: 0.75rem 1.75rem;
+      border-radius: 0.5rem;
+      font-family: var(--body-font);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover { background: #2563eb; transform: translateY(-2px); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    /* ── SECTIONS ── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: var(--mono-font);
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    h2 {
+      font-family: var(--heading-font);
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── PIPELINE ── */
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .pipeline-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .pipeline-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .pipeline-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    .pipeline-num {
+      font-family: var(--mono-font);
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .pipeline-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .pipeline-card p {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .pipeline-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+
+    .tag {
+      font-family: var(--mono-font);
+      font-size: 0.65rem;
+      background: rgba(59,130,246,0.1);
+      color: var(--accent2);
+      border: 1px solid rgba(59,130,246,0.2);
+      padding: 0.2rem 0.6rem;
+      border-radius: 0.25rem;
+    }
+
+    /* ── RESULTS TABLE ── */
+    .results-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    thead tr {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      padding: 1rem 1.25rem;
+      text-align: left;
+      font-family: var(--mono-font);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono-font);
+      font-size: 0.875rem;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    tbody tr:hover { background: var(--surface2); }
+
+    .best-row td { color: var(--accent); }
+    .best-row td:first-child::after {
+      content: ' ✓';
+      color: var(--success);
+      font-size: 0.8rem;
+    }
+
+    /* ── PLOTS GRID ── */
+    .plots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .plot-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+
+    .plot-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    .plot-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .plot-card-label {
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-family: var(--mono-font);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .lightbox.active { display: flex; }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 85vh;
+      border-radius: 0.5rem;
+      object-fit: contain;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── FINDINGS ── */
+    .findings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .finding-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+    }
+
+    .finding-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .finding-card h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .finding-card p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── LIMITATIONS ── */
+    .limit-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .limit-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--warning);
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 1rem 1.25rem;
+      font-size: 0.875rem;
+    }
+
+    .limit-item strong {
+      display: block;
+      margin-bottom: 0.25rem;
+      color: var(--warning);
+      font-size: 0.8rem;
+      font-family: var(--mono-font);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .improve-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .improve-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--success);
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 1rem 1.25rem;
+      font-size: 0.875rem;
+    }
+
+    .improve-item strong {
+      display: block;
+      margin-bottom: 0.25rem;
+      color: var(--success);
+      font-size: 0.8rem;
+      font-family: var(--mono-font);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+    /* ── TECH STACK ── */
+    .tech-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .tech-badge {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 0.6rem 1.1rem;
+      font-family: var(--mono-font);
+      font-size: 0.8rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tech-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+
+  <svg class="ecg-line" viewBox="0 0 1200 120" preserveAspectRatio="none">
+    <path d="M0,60 L100,60 L120,60 L140,20 L160,100 L180,10 L200,110 L220,60 L300,60 L320,60 L340,20 L360,100 L380,10 L400,110 L420,60 L500,60 L520,60 L540,20 L560,100 L580,10 L600,110 L620,60 L700,60 L720,60 L740,20 L760,100 L780,10 L800,110 L820,60 L900,60 L920,60 L940,20 L960,100 L980,10 L1000,110 L1020,60 L1100,60 L1200,60"
+          fill="none" stroke="url(#ecg-grad)" stroke-width="2"/>
+    <defs>
+      <linearGradient id="ecg-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#3b82f6" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#3b82f6" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#06b6d4" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div style="position:relative;z-index:1;">
+    <div class="hero-tag">🫀 Machine Learning · Clinical Data · Binary Classification</div>
+    <h1>Heart Disease<br/><span>Prediction</span></h1>
+    <p class="hero-sub">
+      Predicting the presence of heart disease from clinical patient data using
+      Logistic Regression, Random Forest, XGBoost and SVM.
+    </p>
+
+    <div class="hero-metrics">
+      <div class="metric-pill">
+        <span class="val">0.82</span>
+        <span class="lbl">Accuracy</span>
+      </div>
+      <div class="metric-pill">
+        <span class="val">0.85</span>
+        <span class="lbl">Recall</span>
+      </div>
+      <div class="metric-pill">
+        <span class="val">0.87</span>
+        <span class="lbl">AUC-ROC</span>
+      </div>
+      <div class="metric-pill">
+        <span class="val">302</span>
+        <span class="lbl">Patients</span>
+      </div>
+    </div>
+
+    <div class="hero-ctas">
+      <a href="https://github.com/Marussiah/heart-disease-ml" class="btn btn-primary" target="_blank">
+        ⭐ View on GitHub
+      </a>
+      <a href="https://github.com/Marussiah/heart-disease-ml/tree/main/notebooks" class="btn btn-outline" target="_blank">
+        📓 View Notebooks
+      </a>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- PIPELINE -->
+<section class="fade-in">
+  <div class="section-label">// methodology</div>
+  <h2>Project Pipeline</h2>
+  <div class="pipeline">
+    <div class="pipeline-card">
+      <div class="pipeline-num">01</div>
+      <h3>Exploratory Data Analysis</h3>
+      <p>Analysed distributions, correlations, and class balance across 13 clinical features. Identified 723 duplicate rows and key outliers.</p>
+      <div class="pipeline-tags">
+        <span class="tag">seaborn</span>
+        <span class="tag">matplotlib</span>
+        <span class="tag">pearson correlation</span>
+      </div>
+    </div>
+    <div class="pipeline-card">
+      <div class="pipeline-num">02</div>
+      <h3>Preprocessing</h3>
+      <p>Removed duplicates, winsorized outliers, applied log1p transform to oldpeak, one-hot encoded categoricals, and scaled features.</p>
+      <div class="pipeline-tags">
+        <span class="tag">StandardScaler</span>
+        <span class="tag">winsorization</span>
+        <span class="tag">one-hot encoding</span>
+      </div>
+    </div>
+    <div class="pipeline-card">
+      <div class="pipeline-num">03</div>
+      <h3>Modelling</h3>
+      <p>Trained 4 classifiers with 10-fold stratified cross-validation. Selected best model based on Recall as the primary clinical metric.</p>
+      <div class="pipeline-tags">
+        <span class="tag">LogReg</span>
+        <span class="tag">RandomForest</span>
+        <span class="tag">XGBoost</span>
+        <span class="tag">SVM</span>
+      </div>
+    </div>
+    <div class="pipeline-card">
+      <div class="pipeline-num">04</div>
+      <h3>Evaluation</h3>
+      <p>Deep analysis of best model: confusion matrix, ROC curve, Precision-Recall curve, threshold analysis, and coefficient interpretation.</p>
+      <div class="pipeline-tags">
+        <span class="tag">AUC-ROC</span>
+        <span class="tag">F1</span>
+        <span class="tag">threshold tuning</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- RESULTS -->
+<section class="fade-in">
+  <div class="section-label">// results</div>
+  <h2>Model Comparison</h2>
+  <div class="results-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Accuracy</th>
+          <th>Precision</th>
+          <th>Recall</th>
+          <th>F1</th>
+          <th>AUC-ROC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="best-row">
+          <td>Logistic Regression</td>
+          <td>0.820</td>
+          <td>0.820</td>
+          <td>0.850</td>
+          <td>0.840</td>
+          <td>0.870</td>
+        </tr>
+        <tr>
+          <td>SVM</td>
+          <td>0.780</td>
+          <td>0.790</td>
+          <td>0.820</td>
+          <td>0.810</td>
+          <td>0.860</td>
+        </tr>
+        <tr>
+          <td>Random Forest</td>
+          <td>0.770</td>
+          <td>0.790</td>
+          <td>0.790</td>
+          <td>0.790</td>
+          <td>0.860</td>
+        </tr>
+        <tr>
+          <td>XGBoost</td>
+          <td>0.750</td>
+          <td>0.780</td>
+          <td>0.760</td>
+          <td>0.770</td>
+          <td>0.850</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:1rem;font-size:0.82rem;color:var(--muted);">
+    ✓ Best model selected on <strong style="color:var(--text)">Recall</strong> — minimising missed disease cases is the primary clinical priority.
+    Logistic Regression also offers full interpretability via coefficients.
+  </p>
+</section>
+
+<hr class="divider"/>
+
+<!-- KEY FINDINGS -->
+<section class="fade-in">
+  <div class="section-label">// eda findings</div>
+  <h2>Key Findings</h2>
+  <div class="findings-grid">
+    <div class="finding-card">
+      <div class="finding-icon">📈</div>
+      <h4>Chest Pain Type (cp) — r = +0.43</h4>
+      <p>Strongest positive predictor. Asymptomatic patients had the highest disease rate (~70%) despite having no pain — a counterintuitive but clinically significant finding.</p>
+    </div>
+    <div class="finding-card">
+      <div class="finding-icon">💓</div>
+      <h4>Max Heart Rate (thalach) — r = +0.42</h4>
+      <p>Heart disease patients achieved higher max heart rates. This feature showed the clearest class separation in both histograms and the pairplot.</p>
+    </div>
+    <div class="finding-card">
+      <div class="finding-icon">🏃</div>
+      <h4>Exercise Angina (exang) — r = −0.44</h4>
+      <p>Strongest negative predictor. Over 75% of patients with exercise-induced angina had no heart disease, making it a strong protective signal.</p>
+    </div>
+    <div class="finding-card">
+      <div class="finding-icon">🫀</div>
+      <h4>ST Depression (oldpeak) — r = −0.43</h4>
+      <p>Disease patients clustered near 0. Feature showed heavy right skew — a log1p transformation was applied in preprocessing to reduce skewness.</p>
+    </div>
+    <div class="finding-card">
+      <div class="finding-icon">🔬</div>
+      <h4>Vessels Coloured (ca) — r = −0.41</h4>
+      <p>Patients with 0 coloured vessels had the highest disease rate (~75%). Risk decreased consistently as vessel count increased.</p>
+    </div>
+    <div class="finding-card">
+      <div class="finding-icon">⚠️</div>
+      <h4>723 Duplicate Rows Found</h4>
+      <p>Over 70% of the raw dataset was duplicated. Removing them reduced the dataset from 1,025 to 302 rows — a key preprocessing discovery with major implications for model reliability.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- PLOTS -->
+<section class="fade-in">
+  <div class="section-label">// visualisations</div>
+  <h2>Project Plots</h2>
+  <div class="plots-grid">
+    <div class="plot-card" onclick="openLightbox('plots/target_distribution.png')">
+      <img src="plots/target_distribution.png" alt="Target Distribution"/>
+      <div class="plot-card-label">target_distribution.png</div>
+    </div>
+    <div class="plot-card" onclick="openLightbox('plots/correlation_heatmap.png')">
+      <img src="plots/correlation_heatmap.png" alt="Correlation Heatmap"/>
+      <div class="plot-card-label">correlation_heatmap.png</div>
+    </div>
+    <div class="plot-card" onclick="openLightbox('plots/model_comparison.png')">
+      <img src="plots/model_comparison.png" alt="Model Comparison"/>
+      <div class="plot-card-label">model_comparison.png</div>
+    </div>
+    <div class="plot-card" onclick="openLightbox('plots/roc_curves.png')">
+      <img src="plots/roc_curves.png" alt="ROC Curves"/>
+      <div class="plot-card-label">roc_curves.png</div>
+    </div>
+    <div class="plot-card" onclick="openLightbox('plots/confusion_matrices.png')">
+      <img src="plots/confusion_matrices.png" alt="Confusion Matrices"/>
+      <div class="plot-card-label">confusion_matrices.png</div>
+    </div>
+    <div class="plot-card" onclick="openLightbox('plots/feature_importance.png')">
+      <img src="plots/feature_importance.png" alt="Feature Importance"/>
+      <div class="plot-card-label">feature_importance.png</div>
+    </div>
+    <div class="plot-card" onclick="openLightbox('plots/cv_results.png')">
+      <img src="plots/cv_results.png" alt="CV Results"/>
+      <div class="plot-card-label">cv_results.png</div>
+    </div>
+    <div class="plot-card" onclick="openLightbox('plots/pairplot.png')">
+      <img src="plots/pairplot.png" alt="Pairplot"/>
+      <div class="plot-card-label">pairplot.png</div>
+    </div>
+    <div class="plot-card" onclick="openLightbox('plots/continuous_distributions.png')">
+      <img src="plots/continuous_distributions.png" alt="Continuous Distributions"/>
+      <div class="plot-card-label">continuous_distributions.png</div>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt=""/>
+</div>
+
+<hr class="divider"/>
+
+<!-- LIMITATIONS -->
+<section class="fade-in">
+  <div class="section-label">// honest reflection</div>
+  <h2>Limitations & Improvements</h2>
+  <div class="two-col">
+    <div>
+      <h3 style="font-size:1rem;margin-bottom:1rem;color:var(--warning);">⚠️ Limitations</h3>
+      <div class="limit-list">
+        <div class="limit-item">
+          <strong>Small Dataset</strong>
+          302 rows after deduplication — wide CV standard deviations reflect limited reliability.
+        </div>
+        <div class="limit-item">
+          <strong>No Hyperparameter Tuning</strong>
+          Default configurations used. GridSearchCV on 300 rows risks overfitting to the tuning process.
+        </div>
+        <div class="limit-item">
+          <strong>Gender Imbalance</strong>
+          206 male vs 96 female patients — model may underperform on female patients.
+        </div>
+        <div class="limit-item">
+          <strong>Fixed Threshold (0.5)</strong>
+          A lower threshold may be clinically preferable to reduce missed disease cases.
+        </div>
+        <div class="limit-item">
+          <strong>No External Validation</strong>
+          Model not tested on data from a different hospital or population.
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-size:1rem;margin-bottom:1rem;color:var(--success);">🔮 Future Improvements</h3>
+      <div class="improve-list">
+        <div class="improve-item">
+          <strong>Hyperparameter Tuning</strong>
+          Apply RandomizedSearchCV on a larger dataset for reliable optimisation.
+        </div>
+        <div class="improve-item">
+          <strong>Model Stacking</strong>
+          Train a meta-model on base model predictions for improved performance.
+        </div>
+        <div class="improve-item">
+          <strong>Threshold Optimisation</strong>
+          Select threshold based on clinical cost of False Negatives vs False Positives.
+        </div>
+        <div class="improve-item">
+          <strong>SHAP Explainability</strong>
+          Apply SHAP values to explain individual patient predictions for clinical use.
+        </div>
+        <div class="improve-item">
+          <strong>External Validation</strong>
+          Test on a separate hospital dataset to measure true generalisability.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- TECH STACK -->
+<section class="fade-in">
+  <div class="section-label">// built with</div>
+  <h2>Tech Stack</h2>
+  <div class="tech-grid">
+    <div class="tech-badge"><span class="tech-dot"></span>Python 3.10</div>
+    <div class="tech-badge"><span class="tech-dot"></span>pandas</div>
+    <div class="tech-badge"><span class="tech-dot"></span>numpy</div>
+    <div class="tech-badge"><span class="tech-dot"></span>scikit-learn</div>
+    <div class="tech-badge"><span class="tech-dot"></span>xgboost</div>
+    <div class="tech-badge"><span class="tech-dot"></span>matplotlib</div>
+    <div class="tech-badge"><span class="tech-dot"></span>seaborn</div>
+    <div class="tech-badge"><span class="tech-dot"></span>scipy</div>
+    <div class="tech-badge"><span class="tech-dot"></span>Jupyter Notebook</div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- FOOTER -->
+<footer>
+  <p>
+    Built by <a href="https://github.com/Marussiah" target="_blank">Marussiah</a> ·
+    <a href="https://github.com/Marussiah/heart-disease-ml" target="_blank">GitHub Repository</a> ·
+    Dataset from <a href="https://www.kaggle.com/datasets/johnsmith88/heart-disease-dataset" target="_blank">Kaggle</a>
+  </p>
+</footer>
+
+<script>
+  // Lightbox
+  function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('active');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  // Scroll fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
